@@ -75,6 +75,10 @@ class MainActivity : AppCompatActivity() {
         "other-tgt"
     )
 
+    private val PREFS_NAME = "translation_prefs"
+    private val KEY_SRC_LANG = "src_lang"
+    private val KEY_TGT_LANG = "tgt_lang"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -111,6 +115,8 @@ class MainActivity : AppCompatActivity() {
         spinnerTarget.setSelection(1)  // de-DE
         btnSwap.isEnabled = false      // disabled while auto is active
         btnSwap.imageAlpha = if (btnSwap.isEnabled) 255 else 128
+
+        restorePrefs()
 
         // Show/hide custom input when "Other" is selected
         spinnerSource.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -195,6 +201,46 @@ class MainActivity : AppCompatActivity() {
         return if (selected == "other-tgt") etvCustomTarget.text.toString().trim() else selected
     }
 
+    /** Saves current source & target language selections to SharedPreferences. */
+    private fun savePrefs() {
+        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit()
+        prefs.putString(KEY_SRC_LANG, getSourceLang())
+        prefs.putString(KEY_TGT_LANG, getTargetLang())
+        prefs.apply()
+    }
+
+    /** Restores previously saved language selections into the UI. */
+    private fun restorePrefs() {
+        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+        val srcLang = prefs.getString(KEY_SRC_LANG, "auto") ?: "auto"
+        val tgtLang = prefs.getString(KEY_TGT_LANG, "de-DE") ?: "de-DE"
+
+        // Source spinner
+        val srcIdx = LANGUAGES_SRC.indexOf(srcLang)
+        if (srcIdx >= 0) {
+            spinnerSource.setSelection(srcIdx)
+            etvCustomSource.visibility = View.GONE
+        } else {
+            spinnerSource.setSelection(LANGUAGES_SRC.indexOf("other-src"))
+            etvCustomSource.setText(srcLang)
+            etvCustomSource.visibility = View.VISIBLE
+        }
+
+        // Target spinner
+        val tgtIdx = LANGUAGES_TARGET.indexOf(tgtLang)
+        if (tgtIdx >= 0) {
+            spinnerTarget.setSelection(tgtIdx)
+            etvCustomTarget.visibility = View.GONE
+        } else {
+            spinnerTarget.setSelection(LANGUAGES_TARGET.indexOf("other-tgt"))
+            etvCustomTarget.setText(tgtLang)
+            etvCustomTarget.visibility = View.VISIBLE
+        }
+
+        btnSwap.isEnabled = LANGUAGES_SRC[spinnerSource.selectedItemPosition] != "auto"
+        btnSwap.imageAlpha = if (btnSwap.isEnabled) 255 else 128
+    }
+
     private fun loadModelWithProgress() {
         val modelFile = File(getExternalFilesDir(null), "model.gguf")
         lifecycleScope.launch(Dispatchers.IO) {
@@ -228,6 +274,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun processTranslationRequest() {
+        savePrefs()
         val smolLM = this.smolLM ?: run {
             etvResult.text = Editable.Factory.getInstance().newEditable("❌ Model not initialized")
             return
