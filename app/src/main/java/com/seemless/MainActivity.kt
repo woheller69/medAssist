@@ -45,35 +45,23 @@ class MainActivity : AppCompatActivity() {
 
     private var smolLM: SmolLM? = null
 
-    // Language options matching the HTML frontend
-    private val LANGUAGES_SRC = listOf(
-        "auto",
-        "en-US",
-        "de-DE",
-        "fr-FR",
-        "es-ES",
-        "it-IT",
-        "ja-JP",
-        "zh-CN",
-        "ru-RU",
-        "pt-PT",
-        "pt-BR",
-        "other-src"
+    private val LANGUAGES = listOf(
+        "ar-EG", "ar-SA", "bg-BG", "bn-IN", "ca-ES",
+        "cs-CZ", "da-DK", "de-DE", "el-GR", "en-US",
+        "es-MX", "et-EE", "fa-IR", "fi-FI", "fil-PH",
+        "fr-CA", "fr-FR", "gu-IN", "he-IL", "hi-IN",
+        "hr-HR", "hu-HU", "id-ID", "is-IS", "it-IT",
+        "ja-JP", "kn-IN", "ko-KR", "lt-LT", "lv-LV",
+        "ml-IN", "mr-IN", "nl-NL", "no-NO", "pa-IN",
+        "pl-PL", "pt-BR", "pt-PT", "ro-RO", "ru-RU",
+        "sk-SK", "sl-SI", "sr-RS", "sv-SE", "sw-KE",
+        "sw-TZ", "ta-IN", "te-IN", "th-TH", "tr-TR",
+        "uk-UA", "ur-PK", "vi-VN", "zh-CN", "zh-TW",
+        "zu-ZA"
     )
 
-    private val LANGUAGES_TARGET = listOf(
-        "en-US",
-        "de-DE",
-        "fr-FR",
-        "es-ES",
-        "it-IT",
-        "ja-JP",
-        "zh-CN",
-        "ru-RU",
-        "pt-PT",
-        "pt-BR",
-        "other-tgt"
-    )
+    private val LANGUAGES_SRC = listOf("auto") + LANGUAGES + listOf("other")
+    private val LANGUAGES_TARGET = LANGUAGES + listOf("other")
 
     private val PREFS_NAME = "translation_prefs"
     private val KEY_SRC_LANG = "src_lang"
@@ -121,7 +109,7 @@ class MainActivity : AppCompatActivity() {
         // Show/hide custom input when "Other" is selected
         spinnerSource.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                etvCustomSource.visibility = if (LANGUAGES_SRC[pos] == "other-src") View.VISIBLE else View.GONE
+                etvCustomSource.visibility = if (LANGUAGES_SRC[pos] == "other") View.VISIBLE else View.GONE
                 btnSwap.isEnabled = LANGUAGES_SRC[pos] != "auto"
                 btnSwap.imageAlpha = if (btnSwap.isEnabled) 255 else 128
             }
@@ -130,7 +118,7 @@ class MainActivity : AppCompatActivity() {
 
         spinnerTarget.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                etvCustomTarget.visibility = if (LANGUAGES_TARGET[pos] == "other-tgt") View.VISIBLE else View.GONE
+                etvCustomTarget.visibility = if (LANGUAGES_TARGET[pos] == "other") View.VISIBLE else View.GONE
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
@@ -153,7 +141,7 @@ class MainActivity : AppCompatActivity() {
                 spinnerTarget.setSelection(newTgtPos)
                 etvCustomTarget.visibility = View.GONE
             } else {
-                spinnerTarget.setSelection(LANGUAGES_TARGET.indexOf("other-tgt"))
+                spinnerTarget.setSelection(LANGUAGES_TARGET.indexOf("other"))
                 etvCustomTarget.setText(srcVal)
                 etvCustomTarget.visibility = View.VISIBLE
             }
@@ -164,7 +152,7 @@ class MainActivity : AppCompatActivity() {
                 spinnerSource.setSelection(newSrcPos)
                 etvCustomSource.visibility = View.GONE
             } else {
-                spinnerSource.setSelection(LANGUAGES_SRC.indexOf("other-src"))
+                spinnerSource.setSelection(LANGUAGES_SRC.indexOf("other"))
                 etvCustomSource.setText(tgtVal)
                 etvCustomSource.visibility = View.VISIBLE
             }
@@ -192,13 +180,13 @@ class MainActivity : AppCompatActivity() {
     /** Returns the resolved source language code. */
     private fun getSourceLang(): String {
         val selected = LANGUAGES_SRC[spinnerSource.selectedItemPosition]
-        return if (selected == "other-src") etvCustomSource.text.toString().trim() else selected
+        return if (selected == "other") etvCustomSource.text.toString().trim() else selected
     }
 
     /** Returns the resolved target language code. */
     private fun getTargetLang(): String {
         val selected = LANGUAGES_TARGET[spinnerTarget.selectedItemPosition]
-        return if (selected == "other-tgt") etvCustomTarget.text.toString().trim() else selected
+        return if (selected == "other") etvCustomTarget.text.toString().trim() else selected
     }
 
     /** Saves current source & target language selections to SharedPreferences. */
@@ -221,7 +209,7 @@ class MainActivity : AppCompatActivity() {
             spinnerSource.setSelection(srcIdx)
             etvCustomSource.visibility = View.GONE
         } else {
-            spinnerSource.setSelection(LANGUAGES_SRC.indexOf("other-src"))
+            spinnerSource.setSelection(LANGUAGES_SRC.indexOf("other"))
             etvCustomSource.setText(srcLang)
             etvCustomSource.visibility = View.VISIBLE
         }
@@ -232,7 +220,7 @@ class MainActivity : AppCompatActivity() {
             spinnerTarget.setSelection(tgtIdx)
             etvCustomTarget.visibility = View.GONE
         } else {
-            spinnerTarget.setSelection(LANGUAGES_TARGET.indexOf("other-tgt"))
+            spinnerTarget.setSelection(LANGUAGES_TARGET.indexOf("other"))
             etvCustomTarget.setText(tgtLang)
             etvCustomTarget.visibility = View.VISIBLE
         }
