@@ -4,6 +4,8 @@
 
 Powered by **[TranslateGemma](https://huggingface.co/collections/google/translategemma)** and the **[SmolLM](https://github.com/shubham0204/SmolChat-Android)** inference engine (based on **[llama.cpp](https://github.com/ggml-org/llama.cpp)**).
 
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" height="350"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" height="350"/>
+
 ---
 
 ## ✨ Features
@@ -11,7 +13,7 @@ Powered by **[TranslateGemma](https://huggingface.co/collections/google/translat
 | Feature                   | Description                                                                                  |
 |---------------------------|----------------------------------------------------------------------------------------------|
 | **100% offline**          | All inference runs locally via GGUF on-device model execution                                |
-| **Privacy-first**         | Zero network calls — your text never leaves the device                                       |
+| **Privacy-first**         | Zero network calls, no internet permission — your text never leaves the device                      |
 | **Auto-detect source**    | Choose "auto" to let the model guess the input language, or pick a specific one manually     |
 | **Swap languages**        | One tap to reverse source ↔ target with full custom-language support                         |
 | **Custom language codes** | Select "Other" on either side and type any IETF BCP-47 code                                  |
