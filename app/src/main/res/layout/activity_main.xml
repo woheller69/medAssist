@@ -14,91 +14,12 @@
         android:padding="12dp"
         tools:context="com.seemless.MainActivity">
 
-        <!-- Language Row -->
-        <LinearLayout
-            android:id="@+id/langRow"
+        <Spinner
+            android:id="@+id/spinnerSource"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <!-- Source -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Source"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:paddingBottom="2dp" />
-
-                <Spinner
-                    android:id="@+id/spinnerSource"
-                    android:layout_width="match_parent"
-                    android:layout_height="38dp"
-                    android:backgroundTint="@color/colorAccent"
-                    android:background="@android:drawable/btn_dropdown" />
-
-                <EditText
-                    android:id="@+id/etvCustomSource"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="e.g. de-DE"
-                    android:textSize="12sp"
-                    android:visibility="gone"
-                    android:inputType="text|textNoSuggestions" />
-            </LinearLayout>
-
-            <!-- Swap -->
-            <ImageButton
-                android:id="@+id/btnSwap"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="6dp"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="4dp"
-                android:src="@drawable/swap_32dp"
-                android:background="@null"
-                android:contentDescription="Swap languages" />
-
-            <!-- Target -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Target"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:paddingBottom="2dp" />
-
-                <Spinner
-                    android:id="@+id/spinnerTarget"
-                    android:layout_width="match_parent"
-                    android:layout_height="38dp"
-                    android:backgroundTint="@color/colorAccent"
-                    android:background="@android:drawable/btn_dropdown"/>
-
-                <EditText
-                    android:id="@+id/etvCustomTarget"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="e.g. de-DE"
-                    android:textSize="12sp"
-                    android:visibility="gone"
-                    android:inputType="text|textNoSuggestions" />
-            </LinearLayout>
-        </LinearLayout>
+            android:layout_height="38dp"
+            android:backgroundTint="@color/colorAccent"
+            android:background="@android:drawable/btn_dropdown" />
 
         <!-- Input Panel -->
         <ScrollView
@@ -117,7 +38,7 @@
                 android:textSize="16sp"
                 android:padding="12dp"
                 android:inputType="textNoSuggestions|textMultiLine"
-                android:hint="Enter text to translate…"
+                android:hint="User"
                 android:minHeight="120dp" />
         </ScrollView>
 
@@ -140,10 +61,17 @@
                 android:padding="12dp"
                 android:textIsSelectable="true"
                 android:inputType="textNoSuggestions|textMultiLine"
-                android:hint="Translation…"
+                android:hint="Assistant"
                 android:minHeight="120dp" />
         </ScrollView>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:text = "All model outputs should be considered preliminary and require independent verification,
+clinical correlation, and further investigation through established research and development methodologies. This application is for test purposes only!"
+            android:textSize="11dp"/>
         <!-- Progress Bar -->
         <ProgressBar
             android:id="@+id/progressBar"
@@ -170,13 +98,13 @@
                 android:layout_marginBottom="10dp" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/translateButton"
+                android:id="@+id/runInferenceButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:backgroundTint="@color/colorAccent"
-                android:src="@drawable/translate_48dp"
-                android:contentDescription="Translate"
+                android:src="@drawable/play_arrow"
+                android:contentDescription="Run"
                 android:layout_marginBottom="10dp" />
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/ttsButton"
@@ -186,6 +114,15 @@
                 android:backgroundTint="@color/colorAccent"
                 android:src="@drawable/voice_48dp"
                 android:contentDescription="TextToSpeech"
+                android:layout_marginBottom="10dp" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/resetButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:backgroundTint="@color/colorAccent"
+                android:src="@drawable/reset"
+                android:contentDescription="Reset"
                 android:layout_marginBottom="10dp" />
 
         </LinearLayout>

@@ -15,5 +15,5 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "TLgemma"
+rootProject.name = "medAssist"
 include ':app'

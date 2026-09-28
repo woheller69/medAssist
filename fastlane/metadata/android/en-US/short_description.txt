@@ -1,1 +1,1 @@
-Offline translator based on TranslateGemma
+Medical assistant based on MedGemma

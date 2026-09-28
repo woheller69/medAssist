@@ -8,7 +8,7 @@ android {
     compileSdk 35
 
     defaultConfig {
-        applicationId "org.woheller69.tlgemma"
+        applicationId "org.woheller69.medassist"
         minSdk 28
         targetSdk 35
         versionCode 10

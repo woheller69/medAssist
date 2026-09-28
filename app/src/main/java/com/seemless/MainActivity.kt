@@ -6,10 +6,8 @@ import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
 import android.text.Editable
 import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
@@ -31,15 +29,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var etvResult: EditText
     private lateinit var etvInput: EditText
     private lateinit var progressBar: ProgressBar
-    private lateinit var translateButton: FloatingActionButton
+    private lateinit var runInferenceButton: FloatingActionButton
 
     private lateinit var ttsButton: FloatingActionButton
     private lateinit var inputButton: FloatingActionButton
+    private lateinit var resetButton: FloatingActionButton
     private lateinit var spinnerSource: Spinner
-    private lateinit var spinnerTarget: Spinner
-    private lateinit var btnSwap: ImageButton
-    private lateinit var etvCustomSource: EditText
-    private lateinit var etvCustomTarget: EditText
 
     private var tts: TextToSpeech? = null
 
@@ -60,12 +55,8 @@ class MainActivity : AppCompatActivity() {
         "zu-ZA"
     )
 
-    private val LANGUAGES_SRC = listOf("auto") + LANGUAGES + listOf("other")
-    private val LANGUAGES_TARGET = LANGUAGES + listOf("other")
-
     private val PREFS_NAME = "translation_prefs"
     private val KEY_SRC_LANG = "src_lang"
-    private val KEY_TGT_LANG = "tgt_lang"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,92 +67,23 @@ class MainActivity : AppCompatActivity() {
         etvResult = findViewById(R.id.etvResult)
         etvInput = findViewById(R.id.etvInput)
         progressBar = findViewById(R.id.progressBar)
-        translateButton = findViewById(R.id.translateButton)
+        runInferenceButton = findViewById(R.id.runInferenceButton)
         inputButton = findViewById(R.id.inputButton)
         ttsButton = findViewById(R.id.ttsButton)
+        resetButton = findViewById(R.id.resetButton)
         spinnerSource = findViewById(R.id.spinnerSource)
-        spinnerTarget = findViewById(R.id.spinnerTarget)
-        btnSwap = findViewById(R.id.btnSwap)
-        etvCustomSource = findViewById(R.id.etvCustomSource)
-        etvCustomTarget = findViewById(R.id.etvCustomTarget)
 
         inputButton.setOnClickListener { view: View? -> openSpeechRecognizer() }
-        ttsButton.setOnClickListener { view: View? -> tts?.speak(etvResult.text, TextToSpeech.QUEUE_FLUSH, null, null) }
+        resetButton.setOnClickListener { view: View? -> loadModelWithProgress() }
+        ttsButton.setOnClickListener { view: View? -> tts?.speak(etvResult.text.split("<Answer>")[1], TextToSpeech.QUEUE_FLUSH, null, null) }
 
-        // Populate spinners
-        val srcAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, LANGUAGES_SRC).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
-        val tgtAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, LANGUAGES_TARGET).apply {
+        runInferenceButton.setOnClickListener { processTranslationRequest() }
+
+        val srcAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, LANGUAGES).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
         spinnerSource.adapter = srcAdapter
-        spinnerTarget.adapter = tgtAdapter
-
-        // Default selections (auto / German)
         spinnerSource.setSelection(0)   // auto
-        spinnerTarget.setSelection(1)  // de-DE
-        btnSwap.isEnabled = false      // disabled while auto is active
-        btnSwap.imageAlpha = if (btnSwap.isEnabled) 255 else 128
-
-        restorePrefs()
-
-        // Show/hide custom input when "Other" is selected
-        spinnerSource.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                etvCustomSource.visibility = if (LANGUAGES_SRC[pos] == "other") View.VISIBLE else View.GONE
-                btnSwap.isEnabled = LANGUAGES_SRC[pos] != "auto"
-                btnSwap.imageAlpha = if (btnSwap.isEnabled) 255 else 128
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-        spinnerTarget.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                etvCustomTarget.visibility = if (LANGUAGES_TARGET[pos] == "other") View.VISIBLE else View.GONE
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-        // Swap button — swaps values, not positions, to handle different list lengths
-        btnSwap.setOnClickListener {
-            val srcPos = spinnerSource.selectedItemPosition
-            if (LANGUAGES_SRC[srcPos] == "auto") {
-                Toast.makeText(this, "Cannot swap: source is set to Auto Detect", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Capture current values BEFORE changing anything
-            val srcVal = getSourceLang()
-            val tgtVal = getTargetLang()
-
-            // Set target to the source value — find matching index in target list
-            val newTgtPos = LANGUAGES_TARGET.indexOf(srcVal)
-            if (newTgtPos >= 0) {
-                spinnerTarget.setSelection(newTgtPos)
-                etvCustomTarget.visibility = View.GONE
-            } else {
-                spinnerTarget.setSelection(LANGUAGES_TARGET.indexOf("other"))
-                etvCustomTarget.setText(srcVal)
-                etvCustomTarget.visibility = View.VISIBLE
-            }
-
-            // Set source to the target value — find matching index in source list
-            val newSrcPos = LANGUAGES_SRC.indexOf(tgtVal)
-            if (newSrcPos >= 0) {
-                spinnerSource.setSelection(newSrcPos)
-                etvCustomSource.visibility = View.GONE
-            } else {
-                spinnerSource.setSelection(LANGUAGES_SRC.indexOf("other"))
-                etvCustomSource.setText(tgtVal)
-                etvCustomSource.visibility = View.VISIBLE
-            }
-
-            btnSwap.isEnabled = LANGUAGES_SRC[spinnerSource.selectedItemPosition] != "auto"
-            btnSwap.imageAlpha = if (btnSwap.isEnabled) 255 else 128
-        }
-
-        translateButton.setOnClickListener { processTranslationRequest() }
 
         // Init progress bar
         progressBar.isIndeterminate = true
@@ -173,63 +95,34 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, SetupActivity::class.java))
             return
         }
-
+        restorePrefs()
         loadModelWithProgress()
     }
 
-    /** Returns the resolved source language code. */
-    private fun getSourceLang(): String {
-        val selected = LANGUAGES_SRC[spinnerSource.selectedItemPosition]
-        return if (selected == "other") etvCustomSource.text.toString().trim() else selected
+    private fun getLang(): String {
+        val selected = LANGUAGES[spinnerSource.selectedItemPosition]
+        return selected
     }
 
-    /** Returns the resolved target language code. */
-    private fun getTargetLang(): String {
-        val selected = LANGUAGES_TARGET[spinnerTarget.selectedItemPosition]
-        return if (selected == "other") etvCustomTarget.text.toString().trim() else selected
-    }
-
-    /** Saves current source & target language selections to SharedPreferences. */
+    /** Saves current language selection to SharedPreferences. */
     private fun savePrefs() {
         val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit()
-        prefs.putString(KEY_SRC_LANG, getSourceLang())
-        prefs.putString(KEY_TGT_LANG, getTargetLang())
+        prefs.putString("KEY_LANG", getLang())
         prefs.apply()
     }
 
-    /** Restores previously saved language selections into the UI. */
+    /** Restores previously saved language selection into the UI. */
     private fun restorePrefs() {
         val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        val srcLang = prefs.getString(KEY_SRC_LANG, "auto") ?: "auto"
-        val tgtLang = prefs.getString(KEY_TGT_LANG, "de-DE") ?: "de-DE"
+        val language = prefs.getString("KEY_LANG", "en-US") ?: "en-US"
 
-        // Source spinner
-        val srcIdx = LANGUAGES_SRC.indexOf(srcLang)
-        if (srcIdx >= 0) {
-            spinnerSource.setSelection(srcIdx)
-            etvCustomSource.visibility = View.GONE
-        } else {
-            spinnerSource.setSelection(LANGUAGES_SRC.indexOf("other"))
-            etvCustomSource.setText(srcLang)
-            etvCustomSource.visibility = View.VISIBLE
-        }
-
-        // Target spinner
-        val tgtIdx = LANGUAGES_TARGET.indexOf(tgtLang)
-        if (tgtIdx >= 0) {
-            spinnerTarget.setSelection(tgtIdx)
-            etvCustomTarget.visibility = View.GONE
-        } else {
-            spinnerTarget.setSelection(LANGUAGES_TARGET.indexOf("other"))
-            etvCustomTarget.setText(tgtLang)
-            etvCustomTarget.visibility = View.VISIBLE
-        }
-
-        btnSwap.isEnabled = LANGUAGES_SRC[spinnerSource.selectedItemPosition] != "auto"
-        btnSwap.imageAlpha = if (btnSwap.isEnabled) 255 else 128
+        val langIdx = LANGUAGES.indexOf(language)
+            spinnerSource.setSelection(langIdx)
     }
 
     private fun loadModelWithProgress() {
+        etvResult.text.clear()
+        etvInput.text.clear()
         val modelFile = File(getExternalFilesDir(null), "model.gguf")
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -239,9 +132,9 @@ class MainActivity : AppCompatActivity() {
                 smolLM?.close()
                 val smolLMInstance = SmolLM()
                 val params = SmolLM.InferenceParams(
-                    contextSize = 2048,
-                    storeChats = false,
-                    temperature = 0.01f
+                    contextSize = 8192,
+                    storeChats = true,
+                    temperature = 0.15f
                 )
                 smolLMInstance.load(modelFile.absolutePath, params)
 
@@ -249,6 +142,7 @@ class MainActivity : AppCompatActivity() {
 
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.INVISIBLE
+                    smolLM?.addSystemPrompt("Do not output thinking. Only provide short answers unless the user requests a detailed answer.")
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -268,52 +162,28 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val srcLang = getSourceLang()
-        val tgtLang = getTargetLang()
-
-        // Validate
-        if (srcLang.isEmpty()) {
-            Toast.makeText(this, "Please enter a source language code.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (tgtLang.isEmpty()) {
-            Toast.makeText(this, "Please enter a target language code.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (srcLang == tgtLang) {
-            Toast.makeText(this, "Source and target languages must differ.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val textToTranslate = escapeJson(etvInput.text.toString().trim())
-        if (textToTranslate.isEmpty()) {
-            Toast.makeText(this, "Please enter text to translate.", Toast.LENGTH_SHORT).show()
+        val userPrompt = escapeJson(etvInput.text.toString().trim())
+        if (userPrompt.isEmpty()) {
+            Toast.makeText(this, "Please enter question.", Toast.LENGTH_SHORT).show()
             return
         }
 
         etvResult.text.clear()
-        initTTS(Locale(getTargetLang()))
+        initTTS(Locale(getLang()))
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.VISIBLE
                     progressBar.isIndeterminate = true
-                    translateButton.isEnabled = false
+                    runInferenceButton.isEnabled = false
                 }
 
-                val requestJson = """
-                    {
-                        "type": "text",
-                        "source_lang_code": "$srcLang",
-                        "target_lang_code": "$tgtLang",
-                        "text": $textToTranslate
-                    }
-                """.trimIndent()
-
                 var response = ""
-                smolLM.getResponseAsFlow(requestJson).collect { token ->
+                smolLM.getResponseAsFlow(userPrompt).collect { token ->
                     response += token
+
+                    //Todo: Reasoning is between <unused94> and <unused95> tags Replace <unused94> with "Thinking" and <unused95> with "\n\nReply\n"
                     // Unescape JSON escape sequences in the FULL accumulated response
                     val decoded = response
                         .replace("\\\\", "\u0000")   // protect real backslashes
@@ -321,6 +191,8 @@ class MainActivity : AppCompatActivity() {
                         .replace("\\t", "\t")        // \t → tab
                         .replace("\\r", "\r")        // \r → carriage return
                         .replace("\u0000", "\\")     // restore real backslashes
+                        .replace("<unused94>thought", "<Thinking>\n")
+                        .replace("<unused95>", "\n\n<Answer>\n")
 
                     withContext(Dispatchers.Main) {
                         etvResult.text = Editable.Factory.getInstance().newEditable(
@@ -331,15 +203,15 @@ class MainActivity : AppCompatActivity() {
 
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.INVISIBLE
-                    translateButton.isEnabled = true
+                    runInferenceButton.isEnabled = true
                 }
-                loadModelWithProgress()
+
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.INVISIBLE
                     etvResult.text = Editable.Factory.getInstance().newEditable("❌ Error:\n${e.message}")
                     Toast.makeText(this@MainActivity, "Inference failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                    translateButton.isEnabled = true
+                    runInferenceButton.isEnabled = true
                 }
                 e.printStackTrace()
             }
@@ -352,7 +224,7 @@ class MainActivity : AppCompatActivity() {
             RecognizerIntent.EXTRA_LANGUAGE_MODEL,
             RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
         )
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, getSourceLang());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, getLang());
 
         startActivityForResult(intent, 123)
     }

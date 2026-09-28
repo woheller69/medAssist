@@ -90,7 +90,7 @@ public class SetupActivity extends AppCompatActivity {
 
      public void downloadModel(View v){
          Toast.makeText(this,"Download",Toast.LENGTH_SHORT).show();
-         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://huggingface.co/mradermacher/translategemma-4b-it-GGUF/blob/main/translategemma-4b-it.Q4_K_M.gguf")));
+         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://huggingface.co/unsloth/medgemma-1.5-4b-it-GGUF/blob/main/medgemma-1.5-4b-it-Q4_K_M.gguf")));
      }
     public void installModel(View v){
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
