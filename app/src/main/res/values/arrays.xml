@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="sex_array">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+        <item>Not specified</item>
+    </string-array>
+
+    <string-array name="blood_array">
+        <item>A+</item>
+        <item>A−</item>
+        <item>B+</item>
+        <item>B−</item>
+        <item>AB+</item>
+        <item>AB−</item>
+        <item>O+</item>
+        <item>O−</item>
+        <item>Not known</item>
+    </string-array>
+
+</resources>

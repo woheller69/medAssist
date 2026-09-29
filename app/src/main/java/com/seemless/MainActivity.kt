@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Locale
+import android.util.Log
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,7 +35,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var ttsButton: FloatingActionButton
     private lateinit var inputButton: FloatingActionButton
     private lateinit var resetButton: FloatingActionButton
+
+    private lateinit var userButton: FloatingActionButton
     private lateinit var spinnerSource: Spinner
+
+    private var mainActiveUserId: Long = -1L
+    private var mainPatientPrompt: String = ""
 
     private var tts: TextToSpeech? = null
 
@@ -55,8 +61,8 @@ class MainActivity : AppCompatActivity() {
         "zu-ZA"
     )
 
-    private val PREFS_NAME = "translation_prefs"
-    private val KEY_SRC_LANG = "src_lang"
+    private var userDbHelper: UserDbHelper? = null
+    private val PREFS_NAME: String = "medassist_prefs"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +77,7 @@ class MainActivity : AppCompatActivity() {
         inputButton = findViewById(R.id.inputButton)
         ttsButton = findViewById(R.id.ttsButton)
         resetButton = findViewById(R.id.resetButton)
+        userButton = findViewById(R.id.userButton)
         spinnerSource = findViewById(R.id.spinnerSource)
 
         inputButton.setOnClickListener { view: View? -> openSpeechRecognizer() }
@@ -89,15 +96,39 @@ class MainActivity : AppCompatActivity() {
         progressBar.isIndeterminate = true
         progressBar.visibility = ProgressBar.INVISIBLE
 
-        val modelFile = File(getExternalFilesDir(null), "model.gguf")
+        userDbHelper = UserDbHelper(this)
+        userDbHelper?.writableDatabase
 
-        if (!modelFile.exists()) {
-            startActivity(Intent(this, SetupActivity::class.java))
-            return
-        }
         restorePrefs()
         loadModelWithProgress()
+
+        userButton.setOnClickListener { v: View? ->
+            val intent = Intent(this@MainActivity, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+
     }
+
+    override fun onResume() {
+        super.onResume()
+        val prefs = getSharedPreferences("medassist_settings", MODE_PRIVATE)
+        val activeId = prefs.getLong("last_active_user_id", 1L)
+
+        if (activeId != mainActiveUserId) {
+            etvResult.text.clear()
+            etvInput.text.clear()
+            loadModelWithProgress()
+            return
+        }
+
+        if (activeId != -1L && userDbHelper != null) {
+            val currentPrompt = userDbHelper!!.getUser(activeId)?.toPromptBlock() ?: ""
+            if (currentPrompt != mainPatientPrompt) {
+                loadModelWithProgress()
+            }
+        }
+    }
+
 
     private fun getLang(): String {
         val selected = LANGUAGES[spinnerSource.selectedItemPosition]
@@ -121,9 +152,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadModelWithProgress() {
+        val modelFile = File(getExternalFilesDir(null), "model.gguf")
+
+        if (!modelFile.exists()) {
+            startActivity(Intent(this, SetupActivity::class.java))
+            return
+        }
         etvResult.text.clear()
         etvInput.text.clear()
-        val modelFile = File(getExternalFilesDir(null), "model.gguf")
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 withContext(Dispatchers.Main) {
@@ -134,7 +170,7 @@ class MainActivity : AppCompatActivity() {
                 val params = SmolLM.InferenceParams(
                     contextSize = 8192,
                     storeChats = true,
-                    temperature = 0.15f
+                    temperature = 0.15f,
                 )
                 smolLMInstance.load(modelFile.absolutePath, params)
 
@@ -142,7 +178,26 @@ class MainActivity : AppCompatActivity() {
 
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.INVISIBLE
-                    smolLM?.addSystemPrompt("Do not output thinking. Only provide short answers unless the user requests a detailed answer.")
+                    // Build system prompt — base instructions + optional patient profile
+                    val basePrompt = "Only provide short answers unless the user requests a detailed answer."
+
+
+                    val db = userDbHelper
+                    if (db == null) {
+                        smolLM?.addSystemPrompt(basePrompt)
+                    } else {
+                        val prefs = getSharedPreferences("medassist_settings", MODE_PRIVATE)
+                        val activeId = prefs.getLong("last_active_user_id", -1L)
+                        val profilePrompt = if (activeId != -1L) {
+                            val p = db.getUser(activeId)
+                            if (p != null ) p.toPromptBlock() else ""
+                        } else ""
+
+                        smolLM?.addSystemPrompt("$basePrompt\n\n$profilePrompt")
+                        mainActiveUserId = activeId
+                        mainPatientPrompt = profilePrompt
+                        Log.d("Patient", profilePrompt)
+                    }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -240,10 +295,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-        deinitTTS()
-        smolLM?.close()
-        smolLM = null
+        super.onDestroy();
+        deinitTTS();
+        smolLM?.close();
+        smolLM = null;
+        userDbHelper?.close();   // close SQLite
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, @Nullable data: Intent?) {

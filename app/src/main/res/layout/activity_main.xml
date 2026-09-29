@@ -124,6 +124,15 @@ clinical correlation, and further investigation through established research and
                 android:src="@drawable/reset"
                 android:contentDescription="Reset"
                 android:layout_marginBottom="10dp" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/userButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:backgroundTint="@color/colorAccent"
+                android:src="@drawable/user_24dp"
+                android:contentDescription="User"
+                android:layout_marginBottom="10dp" />
 
         </LinearLayout>
 
