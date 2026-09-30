@@ -177,7 +177,8 @@ public class UserDbHelper extends SQLiteOpenHelper {
         /** Returns a concise text block suitable for the LLM system prompt. */
         public String toPromptBlock() {
             StringBuilder sb = new StringBuilder();
-            sb.append("Patient Profile: ").append(name);
+            sb.append("Patient Profile: ");
+            sb.append("Name: ").append(name);
             if (age > 0)                        sb.append(" | Age: ").append(age);
             if (sex != null && !sex.isEmpty())   sb.append(" | Sex: ").append(sex);
             if (weight > 0)                        sb.append(" | Weight: ").append(weight).append(" kg");

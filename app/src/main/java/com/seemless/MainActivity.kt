@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         resetButton.setOnClickListener { view: View? -> loadModelWithProgress() }
         ttsButton.setOnClickListener { view: View? -> tts?.speak(etvResult.text.split("<Answer>")[1], TextToSpeech.QUEUE_FLUSH, null, null) }
 
-        runInferenceButton.setOnClickListener { processTranslationRequest() }
+        runInferenceButton.setOnClickListener { runInference() }
 
         val srcAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, LANGUAGES).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -210,7 +210,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun processTranslationRequest() {
+    private fun runInference() {
         savePrefs()
         val smolLM = this.smolLM ?: run {
             etvResult.text = Editable.Factory.getInstance().newEditable("❌ Model not initialized")
