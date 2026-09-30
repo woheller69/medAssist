@@ -4,8 +4,8 @@
 - based on Google MedGemma
 
 Important: Do not rely on model outputs. This application is for test purposes only!
-All model outputs should be considered preliminary and require independent verification,
-clinical correlation, and further investigation through established research and development methodologies.
+Model output not a substitute for professional medical advice. 
+In case of emergency, call your local emergency services immediately!
 
 Powered by **[MedGemma](https://deepmind.google/models/gemma/medgemma/)** and the **[SmolLM](https://github.com/shubham0204/SmolChat-Android)** inference engine (based on **[llama.cpp](https://github.com/ggml-org/llama.cpp)**).
 

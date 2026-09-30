@@ -69,9 +69,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
-            android:text = "All model outputs should be considered preliminary and require independent verification,
-clinical correlation, and further investigation through established research and development methodologies. This application is for test purposes only!"
-            android:textSize="11dp"/>
+            android:text = "This is not a substitute for professional medical advice. In case of emergency, call your local emergency services immediately!"
+            android:textSize="12dp"/>
         <!-- Progress Bar -->
         <ProgressBar
             android:id="@+id/progressBar"
