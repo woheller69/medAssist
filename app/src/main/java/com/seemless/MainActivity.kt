@@ -23,6 +23,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Locale
 import android.util.Log
+import androidx.core.view.isVisible
 
 
 class MainActivity : AppCompatActivity() {
@@ -84,7 +85,16 @@ class MainActivity : AppCompatActivity() {
         resetButton.setOnClickListener { view: View? -> loadModelWithProgress() }
         ttsButton.setOnClickListener { view: View? -> tts?.speak(etvResult.text.split("<Answer>")[1], TextToSpeech.QUEUE_FLUSH, null, null) }
 
-        runInferenceButton.setOnClickListener { runInference() }
+        runInferenceButton.setOnClickListener {
+            if (progressBar.isVisible) {
+                smolLM?.stop()
+                runInferenceButton.setImageResource(R.drawable.play_arrow)
+            }
+            else {
+                runInference()
+                runInferenceButton.setImageResource(R.drawable.ic_stop)
+            }
+        }
 
         val srcAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, LANGUAGES).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -231,7 +241,6 @@ class MainActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.VISIBLE
                     progressBar.isIndeterminate = true
-                    runInferenceButton.isEnabled = false
                 }
 
                 var response = ""
@@ -258,15 +267,15 @@ class MainActivity : AppCompatActivity() {
 
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.INVISIBLE
-                    runInferenceButton.isEnabled = true
+                    runInferenceButton.setImageResource(R.drawable.play_arrow)
                 }
 
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.INVISIBLE
+                    runInferenceButton.setImageResource(R.drawable.play_arrow)
                     etvResult.text = Editable.Factory.getInstance().newEditable("❌ Error:\n${e.message}")
                     Toast.makeText(this@MainActivity, "Inference failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                    runInferenceButton.isEnabled = true
                 }
                 e.printStackTrace()
             }
