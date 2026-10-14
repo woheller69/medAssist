@@ -3,8 +3,8 @@
 - no internet required, no data ever leaves your phone
 - based on Google MedGemma
 
-Important: Do not rely on model outputs. This application is for test purposes only!
-Model output not a substitute for professional medical advice. 
+Important: Do not rely on model outputs!
+Model output is not a substitute for professional medical advice. 
 In case of emergency, call your local emergency services immediately!
 
 Powered by **[MedGemma](https://deepmind.google/models/gemma/medgemma/)** and the **[SmolLM](https://github.com/shubham0204/SmolChat-Android)** inference engine (based on **[llama.cpp](https://github.com/ggml-org/llama.cpp)**).
@@ -45,5 +45,6 @@ Once the model is in place, tap **Start** to launch the translator.
 - **[shubham0204](https://github.com/shubham0204/SmolChat-Android)** — SmolLM Android inference engine (Apache 2.0 license)
 - **[mradermacher](https://huggingface.co/mradermacher)** — Quantized TranslateGemma GGUF model weights (Gemma license)
 - **[llama.cpp](https://github.com/ggml-org/llama.cpp)** — LLM inference in C/C++ (MIT license)
+- **[Markwon](https://github.com/noties/Markwon)** — Markdown conversion 
 
 ---

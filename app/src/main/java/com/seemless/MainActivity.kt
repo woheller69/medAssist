@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
-import android.text.Editable
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -23,12 +22,14 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Locale
 import android.util.Log
+import android.widget.TextView
 import androidx.core.view.isVisible
+import io.noties.markwon.Markwon
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var etvResult: EditText
+    private lateinit var tvResult: TextView
     private lateinit var etvInput: EditText
     private lateinit var progressBar: ProgressBar
     private lateinit var runInferenceButton: FloatingActionButton
@@ -64,6 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     private var userDbHelper: UserDbHelper? = null
     private val PREFS_NAME: String = "medassist_prefs"
+    private var modelReply: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         ThemeUtils.setStatusBarAppearance(this)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
 
-        etvResult = findViewById(R.id.etvResult)
+        tvResult = findViewById(R.id.tvResult)
         etvInput = findViewById(R.id.etvInput)
         progressBar = findViewById(R.id.progressBar)
         runInferenceButton = findViewById(R.id.runInferenceButton)
@@ -83,7 +85,14 @@ class MainActivity : AppCompatActivity() {
 
         inputButton.setOnClickListener { view: View? -> openSpeechRecognizer() }
         resetButton.setOnClickListener { view: View? -> loadModelWithProgress() }
-        ttsButton.setOnClickListener { view: View? -> tts?.speak(etvResult.text.split("<Answer>")[1], TextToSpeech.QUEUE_FLUSH, null, null) }
+        ttsButton.setOnClickListener { view: View? ->
+            val split = modelReply.split("**Answer**")
+            if (split.size > 1) {
+                tts?.speak(split[1], TextToSpeech.QUEUE_FLUSH, null, null)
+            } else {
+                tts?.speak(split[0], TextToSpeech.QUEUE_FLUSH, null, null)
+            }
+        }
 
         runInferenceButton.setOnClickListener {
             if (progressBar.isVisible) {
@@ -125,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         val activeId = prefs.getLong("last_active_user_id", 1L)
 
         if (activeId != mainActiveUserId) {
-            etvResult.text.clear()
+            tvResult.text = ""
             etvInput.text.clear()
             loadModelWithProgress()
             return
@@ -168,7 +177,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, SetupActivity::class.java))
             return
         }
-        etvResult.text.clear()
+        tvResult.text= ""
         etvInput.text.clear()
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -212,7 +221,7 @@ class MainActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.INVISIBLE
-                    etvResult.text = Editable.Factory.getInstance().newEditable("❌ Error loading model:\n${e.message ?: "Unknown"}")
+                    tvResult.text = "❌ Error loading model:\n${e.message ?: "Unknown"}"
                     Toast.makeText(this@MainActivity, "Failed to load model: ${e.message}", Toast.LENGTH_LONG).show()
                 }
                 e.printStackTrace()
@@ -223,7 +232,7 @@ class MainActivity : AppCompatActivity() {
     private fun runInference() {
         savePrefs()
         val smolLM = this.smolLM ?: run {
-            etvResult.text = Editable.Factory.getInstance().newEditable("❌ Model not initialized")
+            tvResult.text = "❌ Model not initialized"
             return
         }
 
@@ -233,7 +242,8 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        etvResult.text.clear()
+        tvResult.text=""
+        tvResult.setTextIsSelectable(false)
         initTTS(Locale(getLang()))
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -244,28 +254,29 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 var response = ""
+                val markwon = Markwon.create(this@MainActivity)
                 smolLM.getResponseAsFlow(userPrompt).collect { token ->
                     response += token
 
                     //Todo: Reasoning is between <unused94> and <unused95> tags Replace <unused94> with "Thinking" and <unused95> with "\n\nReply\n"
                     // Unescape JSON escape sequences in the FULL accumulated response
-                    val decoded = response
+                    modelReply = response
                         .replace("\\\\", "\u0000")   // protect real backslashes
                         .replace("\\n", "\n")        // \n → actual newline
                         .replace("\\t", "\t")        // \t → tab
                         .replace("\\r", "\r")        // \r → carriage return
                         .replace("\u0000", "\\")     // restore real backslashes
-                        .replace("<unused94>thought", "<Thinking>\n")
-                        .replace("<unused95>", "\n\n<Answer>\n")
+                        .replace("<unused94>thought", "**Thinking**\n")
+                        .replace("<unused95>", "\n\n**Answer**\n\n")
 
                     withContext(Dispatchers.Main) {
-                        etvResult.text = Editable.Factory.getInstance().newEditable(
-                            decoded.ifEmpty { "⚠️ Empty response" }
-                        )
+                        val markdown = markwon.toMarkdown(modelReply.ifEmpty { "⚠️ Empty response" })
+                        tvResult.text = markdown
                     }
                 }
 
                 withContext(Dispatchers.Main) {
+                    tvResult.setTextIsSelectable(true)
                     progressBar.visibility = ProgressBar.INVISIBLE
                     runInferenceButton.setImageResource(R.drawable.play_arrow)
                 }
@@ -274,7 +285,7 @@ class MainActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.INVISIBLE
                     runInferenceButton.setImageResource(R.drawable.play_arrow)
-                    etvResult.text = Editable.Factory.getInstance().newEditable("❌ Error:\n${e.message}")
+                    tvResult.text = "❌ Error:\n${e.message}"
                     Toast.makeText(this@MainActivity, "Inference failed: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
                 e.printStackTrace()
