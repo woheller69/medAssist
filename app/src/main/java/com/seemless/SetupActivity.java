@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ public class SetupActivity extends AppCompatActivity {
     ProgressBar progressBar;
     TextView extractedFileTV;
     Button startButton;
+    CheckBox acceptLicense;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +39,7 @@ public class SetupActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         extractedFileTV = findViewById(R.id.extracted_file);
         startButton = findViewById(R.id.button_start);
+        acceptLicense = findViewById(R.id.accept_license);
 
         File sdcardDataFolder = getExternalFilesDir(null);
 
@@ -93,9 +96,13 @@ public class SetupActivity extends AppCompatActivity {
          startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://huggingface.co/unsloth/medgemma-1.5-4b-it-GGUF/blob/main/medgemma-1.5-4b-it-Q4_K_M.gguf")));
      }
     public void installModel(View v){
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.setType ("*/*");
-        install.launch(intent);
+        if (acceptLicense.isChecked()){
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.setType ("*/*");
+            install.launch(intent);
+        } else {
+            Toast.makeText(this, R.string.hint_accept_terms,Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void startMain(View v){
@@ -104,4 +111,7 @@ public class SetupActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void readLicense(View view) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://developers.google.com/health-ai-developer-foundations/terms")));
+    }
 }
