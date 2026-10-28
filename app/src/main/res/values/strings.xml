@@ -9,5 +9,6 @@
     <string name="hint_accept_terms">You need to accept the terms of use first.</string>
     <string name="accept_terms_of_use">I accept the Health AI Developer Foundations terms of use.</string>
     <string name="license">The use of MedGemma is governed by the Health AI Developer Foundations terms of use.\n\nMedGemma has not been evaluated or optimized for multi-turn applications.</string>
+    <string name="install_whisper">Install Whisper+</string>
 
 </resources>
