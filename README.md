@@ -11,7 +11,7 @@ In case of emergency, call your local emergency services immediately!
 
 Powered by **[MedGemma](https://deepmind.google/models/gemma/medgemma/)** and the **[SmolLM](https://github.com/shubham0204/SmolChat-Android)** inference engine (based on **[llama.cpp](https://github.com/ggml-org/llama.cpp)**).
 
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" height="350"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" height="350"/>
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" height="350"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" height="350"/> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.png" height="350"/>
 
 ---
 
