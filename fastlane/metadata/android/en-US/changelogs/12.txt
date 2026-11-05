@@ -1,1 +1,4 @@
+Fixed crash
+Reduce build size
+Add license info
 Improved strings

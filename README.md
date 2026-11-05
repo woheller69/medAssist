@@ -1,5 +1,7 @@
 # Medical assistant based on MedGemma
 
+- discuss medical issues with your personal AI assistant
+- the assistant will take your existing conditions, vitals and medication into account
 - no internet required, no data ever leaves your phone
 - based on Google MedGemma
 
