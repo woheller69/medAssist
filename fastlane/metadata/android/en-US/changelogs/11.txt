@@ -1,0 +1,2 @@
+Upgrade smollm to 1.5
+add stop button

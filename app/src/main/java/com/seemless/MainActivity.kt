@@ -168,7 +168,7 @@ class MainActivity : AppCompatActivity() {
         val language = prefs.getString("KEY_LANG", "en-US") ?: "en-US"
 
         val langIdx = LANGUAGES.indexOf(language)
-            spinnerSource.setSelection(langIdx)
+        spinnerSource.setSelection(langIdx)
     }
 
     private fun loadModelWithProgress() {

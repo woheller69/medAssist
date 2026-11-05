@@ -135,11 +135,11 @@
                     android:entries="@array/blood_array" />
             </LinearLayout>
 
-            <!-- Pre-existing Conditions -->
+            <!-- Conditions & Vitals -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Pre-existing Conditions"
+                android:hint="Conditions &amp; Vitals"
                 android:layout_marginTop="8dp">
 
                 <com.google.android.material.textfield.TextInputEditText

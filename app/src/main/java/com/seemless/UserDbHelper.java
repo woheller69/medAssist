@@ -185,7 +185,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
             if (height > 0)                        sb.append(" | Height: ").append(height).append(" cm");
             if (blood != null && !blood.isEmpty()) sb.append(" | Blood Type: ").append(blood);
             if (conditions != null && !conditions.isEmpty())
-                sb.append(" | Pre-existing Conditions: ").append(conditions);
+                sb.append(" | Conditions & Vitals: ").append(conditions);
             if (medication != null && !medication.isEmpty())
                 sb.append(" | Current Medication: ").append(medication);
             sb.append("\n\n");
