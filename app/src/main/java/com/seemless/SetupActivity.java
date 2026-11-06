@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ public class SetupActivity extends AppCompatActivity {
     TextView extractedFileTV;
     Button startButton;
     CheckBox acceptLicense;
+    LinearLayout downloadInstall;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,8 +41,14 @@ public class SetupActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         extractedFileTV = findViewById(R.id.extracted_file);
         startButton = findViewById(R.id.button_start);
+        downloadInstall = findViewById(R.id.download_install);
         acceptLicense = findViewById(R.id.accept_license);
-
+        acceptLicense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (acceptLicense.isChecked()) downloadInstall.setVisibility(View.VISIBLE);
+            }
+        });
         File sdcardDataFolder = getExternalFilesDir(null);
 
         install = registerForActivityResult(

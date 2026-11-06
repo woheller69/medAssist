@@ -1,10 +1,21 @@
 medAssist - on device medical assistant
 
-- discuss medical issues with your personal AI assistant
-- the assistant will take your existing conditions, vitals and medication into account
-- no internet required, no data ever leaves your phone
-- based on Google MedGemma
+Discuss medical topics with your personal AI assistant.
+The assistant takes your existing conditions, vitals, and medication into account for context,
+but does not replace professional medical judgment.
 
-Important: Do not rely on model outputs!
-Model output is not a substitute for professional medical advice.
-In case of emergency, call your local emergency services immediately!
+- 100% Offline: No internet required.
+- Privacy-First: No data ever leaves your phone.
+- Powered by MedGemma: Based on Google’s open-weight medical LLM.
+
+
+CRITICAL DISCLAIMER: READ BEFORE USING
+medAssist is NOT a medical device and does NOT provide medical advice.
+This application is an educational and informational tool only.
+It uses a large language model (MedGemma) that can produce incorrect, outdated, or harmful information.
+It has no understanding of your personal medical history beyond what you type, cannot perform clinical judgment,
+and is not evaluated by any medical regulatory body.
+
+NEVER rely on this app for diagnosis, treatment decisions, or emergency care.
+Always consult a qualified healthcare professional for medical concerns.
+In case of emergency, call your local emergency services immediately.

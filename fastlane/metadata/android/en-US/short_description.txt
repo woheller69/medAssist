@@ -1,1 +1,1 @@
-Medical assistant based on MedGemma
+medAssist: Offline Medical Assistant based on MedGemma
