@@ -10,7 +10,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -31,15 +33,20 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
+        ThemeUtils.setStatusBarAppearance(this);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         dbHelper = new UserDbHelper(this);
         initViews();
         loadUserList();
         setupListeners();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     // ── VIEW INIT ────────────────────────────────────────────────
-// ── Load last-active on create (restore spinner position) ────
+    // ── Load last-active on create (restore spinner position) ────
     private void initViews() {
         spinnerUsers = findViewById(R.id.spinnerUsers);
         btnSave      = findViewById(R.id.btnSave);

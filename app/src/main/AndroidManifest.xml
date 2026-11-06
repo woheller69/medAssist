@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:largeHeap="true"
-        android:theme="@style/Theme.TFLiteAudio">
+        android:theme="@style/Theme.Default">
         <activity android:name=".SetupActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="true">
@@ -30,6 +30,8 @@
         </activity>
         <activity android:name="com.seemless.SettingsActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.Settings"
             android:exported="true">
         </activity>
 
