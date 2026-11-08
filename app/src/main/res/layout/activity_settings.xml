@@ -67,7 +67,8 @@
                     android:layout_height="wrap_content"
                     android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
-            <!-- Age, Weight, Height -->
+
+            <!-- Date of Birth, Weight, Height -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -77,21 +78,23 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Age">
+                    android:layout_weight="3"
+                    android:hint="Date of Birth">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etAge"
+                        android:id="@+id/etDateOfBirth"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="number"/>
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:clickable="true"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Weight (kg)">
+                    android:layout_weight="2"
+                    android:hint="Weight kg">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etWeight"
@@ -103,8 +106,8 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Height (cm)">
+                    android:layout_weight="2"
+                    android:hint="Height cm">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etHeight"
@@ -113,6 +116,7 @@
                         android:inputType="numberDecimal"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
+
             <!-- Sex, Blood -->
             <LinearLayout
                 android:layout_width="match_parent"

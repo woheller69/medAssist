@@ -1,8 +1,10 @@
 package com.seemless;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,6 +18,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 public class SettingsActivity extends AppCompatActivity {
 
     private UserDbHelper dbHelper;
@@ -24,7 +32,7 @@ public class SettingsActivity extends AppCompatActivity {
     private ArrayAdapter<String> userAdapter;
     private FloatingActionButton btnSave, btnDelete, btnAdd;
 
-    private EditText       etName, etAge, etWeight, etHeight, etConditions, etMedication;
+    private EditText       etName, etDateOfBirth, etWeight, etHeight, etConditions, etMedication;
     private Spinner        spinnerSex, spinnerBlood;
 
     private long currentUserId = 1; //Anonymous
@@ -54,7 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
         btnAdd       = findViewById(R.id.btnAdd);
 
         etName        = findViewById(R.id.etName);
-        etAge         = findViewById(R.id.etAge);
+        etDateOfBirth = findViewById(R.id.etDateOfBirth);
         etWeight      = findViewById(R.id.etWeight);
         etHeight      = findViewById(R.id.etHeight);
         etConditions  = findViewById(R.id.etConditions);
@@ -127,8 +135,15 @@ public class SettingsActivity extends AppCompatActivity {
     private void loadUserForm(UserDbHelper.User user) {
         currentUserId = user.id;
         etName.setText(user.name);
-        if (user.age > 0)          etAge.setText(String.valueOf(user.age));
-        else                       etAge.setText("");
+
+        // Handle Date of Birth
+        if (user.dob > Long.MIN_VALUE) {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+            etDateOfBirth.setText(sdf.format(new Date(user.dob * 1000L))); // dob is in seconds, Date constructor needs milliseconds
+        } else {
+            etDateOfBirth.setText("");
+        }
+
         if (user.weight > 0)       etWeight.setText(String.valueOf(user.weight));
         else                       etWeight.setText("");
         if (user.height > 0)       etHeight.setText(String.valueOf(user.height));
@@ -152,7 +167,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void clearForm() {
         currentUserId = -1;
         etName.setText("");
-        etAge.setText("");
+        etDateOfBirth.setText("");
         etWeight.setText("");
         etHeight.setText("");
         etConditions.setText("");
@@ -175,6 +190,26 @@ public class SettingsActivity extends AppCompatActivity {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+        // ── DATE OF BIRTH CLICK ─────────────────────────────────
+        etDateOfBirth.setOnClickListener(v -> {
+            Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog dialog = new DatePickerDialog(
+                    SettingsActivity.this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        Calendar selectedDate = Calendar.getInstance();
+                        selectedDate.set(selectedYear, selectedMonth, selectedDay);
+                        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+                        etDateOfBirth.setText(sdf.format(selectedDate.getTime()));
+                    },
+                    year, month, day
+            );
+            dialog.show();
+        });
+
         // ── ADD BUTTON ───────────────────────────────────────
         btnAdd.setOnClickListener(v -> {
             clearForm();
@@ -187,7 +222,7 @@ public class SettingsActivity extends AppCompatActivity {
                 return;
             }
 
-            int    age        = parseInt(etAge.getText().toString(), 0);
+            long dob = getEpochFromDateString(etDateOfBirth.getText().toString().trim());
             String sex        = spinnerSex.getSelectedItem().toString();
             double weight     = parseDouble(etWeight.getText().toString(), 0);
             double height     = parseDouble(etHeight.getText().toString(), 0);
@@ -198,14 +233,14 @@ public class SettingsActivity extends AppCompatActivity {
             UserDbHelper.User existing = getUserByName(name);
 
             if (existing != null && existing.id == currentUserId) {
-                dbHelper.updateUser(currentUserId, name, sex, age, weight, height, blood, conditions, medication);
+                dbHelper.updateUser(currentUserId, name, sex, dob, weight, height, blood, conditions, medication);
                 Toast.makeText(this, "Patient updated", Toast.LENGTH_SHORT).show();
             } else if (existing != null && existing.id != currentUserId) {
-                dbHelper.updateUser(existing.id, name, sex, age, weight, height, blood, conditions, medication);
+                dbHelper.updateUser(existing.id, name, sex, dob, weight, height, blood, conditions, medication);
                 currentUserId = existing.id;
                 Toast.makeText(this, "Patient \"" + name + "\" updated (merged)", Toast.LENGTH_SHORT).show();
             } else {
-                long id = dbHelper.insertUser(name, age, sex, weight, height, blood, conditions, medication);
+                long id = dbHelper.insertUser(name, dob, sex, weight, height, blood, conditions, medication);
                 if (id != -1) {
                     currentUserId = id;
                     Toast.makeText(this, "Patient \"" + name + "\" added", Toast.LENGTH_SHORT).show();
@@ -243,6 +278,30 @@ public class SettingsActivity extends AppCompatActivity {
     private double parseDouble(String s, double defaultVal) {
         try { return Double.parseDouble(s.isEmpty() ? "0" : s); }
         catch (NumberFormatException e) { return defaultVal; }
+    }
+
+    private long getEpochFromDateString(String dateString) {
+        // Handle empty date field
+        if (dateString == null || dateString.trim().isEmpty()) {
+            // Return Long.MIN_VALUE to indicate "unknown date of birth"
+            return Long.MIN_VALUE;
+        }
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+            Date date = sdf.parse(dateString);
+
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            cal.setTime(date);
+
+            return cal.getTimeInMillis() / 1000;
+
+        } catch (Exception e) {
+            // Log the error for debugging
+            Log.e("SettingsActivity", "Error parsing date: " + dateString, e);
+            // Return Long.MIN_VALUE to indicate "unknown date of birth"
+            return Long.MIN_VALUE;
+        }
     }
 
     @Override

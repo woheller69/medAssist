@@ -8,19 +8,17 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class UserDbHelper extends SQLiteOpenHelper {
 
     private Context context;
     private static final String DB_NAME = "medassist_users.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     public static final String TABLE_USERS = "users";
     public static final String COL_ID      = "_id";
     public static final String COL_NAME    = "name";
-
-    public static final String COL_AGE    = "age";
+    public static final String COL_DOB     = "dob";
     public static final String COL_SEX     = "sex";
     public static final String COL_WEIGHT  = "weight";
     public static final String COL_HEIGHT  = "height";
@@ -32,7 +30,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + TABLE_USERS + " (" +
                     COL_ID      + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     COL_NAME    + " TEXT NOT NULL," +
-                    COL_AGE     + " INTEGER," +
+                    COL_DOB     + " INTEGER," +
                     COL_SEX     + " TEXT," +
                     COL_WEIGHT  + " REAL," +
                     COL_HEIGHT  + " REAL," +
@@ -51,7 +49,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE);
         ContentValues cv = new ContentValues();
         cv.put(COL_NAME,      "Anonymous");
-        cv.put(COL_AGE,       -1 );
+        cv.put(COL_DOB,       Long.MIN_VALUE);
         cv.put(COL_SEX,       "Not specified");
         cv.put(COL_WEIGHT,    -1);
         cv.put(COL_HEIGHT,    -1);
@@ -70,12 +68,12 @@ public class UserDbHelper extends SQLiteOpenHelper {
     }
 
     // ── INSERT ────────────────────────────────────────────────────
-    public long insertUser(String name, int age, String sex, double weight, double height,
+    public long insertUser(String name, long dob, String sex, double weight, double height,
                            String blood, String conditions, String medication) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COL_NAME,      name);
-        cv.put(COL_AGE,       age );
+        cv.put(COL_DOB,       dob);
         cv.put(COL_SEX,       sex);
         cv.put(COL_WEIGHT,    weight);
         cv.put(COL_HEIGHT,    height);
@@ -88,12 +86,12 @@ public class UserDbHelper extends SQLiteOpenHelper {
     }
 
     // ── UPDATE ────────────────────────────────────────────────────
-    public int updateUser(long id, String name, String sex, int age, double weight, double height,
+    public int updateUser(long id, String name, String sex, long dob, double weight, double height,
                           String blood, String conditions, String medication) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COL_NAME,         name);
-        cv.put(COL_AGE,          age );
+        cv.put(COL_DOB,          dob);
         cv.put(COL_SEX,          sex);
         cv.put(COL_WEIGHT,       weight);
         cv.put(COL_HEIGHT,       height);
@@ -141,7 +139,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
         return new User(
                 c.getLong(c.getColumnIndexOrThrow(COL_ID)),
                 c.getString(c.getColumnIndexOrThrow(COL_NAME)),
-                c.getInt(c.getColumnIndexOrThrow(COL_AGE)),
+                c.getLong(c.getColumnIndexOrThrow(COL_DOB)),
                 c.getString(c.getColumnIndexOrThrow(COL_SEX)),
                 c.getDouble(c.getColumnIndexOrThrow(COL_WEIGHT)),
                 c.getDouble(c.getColumnIndexOrThrow(COL_HEIGHT)),
@@ -155,7 +153,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
     public static class User {
         public final long    id;
         public final String  name;
-        public final int  age;
+        public final long    dob;      // epoch seconds
         public final String  sex;
         public final double  weight;   // kg
         public final double  height;   // cm
@@ -163,11 +161,11 @@ public class UserDbHelper extends SQLiteOpenHelper {
         public final String  conditions;
         public final String  medication;
 
-        public User(long id, String name, int age, String sex, double weight,
+        public User(long id, String name, long dob, String sex, double weight,
                     double height, String blood, String conditions,
                     String medication) {
             this.id = id; this.name = name;
-            this.age = age;
+            this.dob = dob;
             this.sex = sex;
             this.weight = weight; this.height = height;
             this.blood = blood; this.conditions = conditions;
@@ -179,7 +177,14 @@ public class UserDbHelper extends SQLiteOpenHelper {
             StringBuilder sb = new StringBuilder();
             sb.append("Patient Profile: ");
             sb.append("Name: ").append(name);
-            if (age > 0)                        sb.append(" | Age: ").append(age);
+
+            if (dob > Long.MIN_VALUE) {
+                long nowSeconds = System.currentTimeMillis() / 1000;
+                long ageApproxSeconds = nowSeconds - dob;
+                int ageApproxYears = (int) (ageApproxSeconds / (365 * 24 * 60 * 60));
+                sb.append(" | Age: ").append(ageApproxYears);
+            }
+
             if (sex != null && !sex.isEmpty())   sb.append(" | Sex: ").append(sex);
             if (weight > 0)                        sb.append(" | Weight: ").append(weight).append(" kg");
             if (height > 0)                        sb.append(" | Height: ").append(height).append(" cm");
