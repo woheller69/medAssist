@@ -192,7 +192,14 @@ public class SettingsActivity extends AppCompatActivity {
 
         // ── DATE OF BIRTH CLICK ─────────────────────────────────
         etDateOfBirth.setOnClickListener(v -> {
+
+            long dobSeconds = getEpochFromDateString(etDateOfBirth.getText().toString().trim());
+
             Calendar c = Calendar.getInstance();
+            if (dobSeconds > Long.MIN_VALUE) {
+                c.setTimeInMillis(dobSeconds * 1000L);
+            }
+
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);

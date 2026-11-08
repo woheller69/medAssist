@@ -4,5 +4,10 @@
     </style>
 
     <style name="Theme.Settings" parent="Theme.Material3.DayNight">
+        <item name="android:datePickerStyle">@style/SpinnerDatePicker</item>
     </style>
+    <style name="SpinnerDatePicker" parent="android:Widget.Material.DatePicker">
+        <item name="android:datePickerMode">spinner</item>
+    </style>
+
 </resources>
