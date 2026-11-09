@@ -26,6 +26,8 @@ import android.util.Log
 import android.widget.TextView
 import androidx.core.view.isVisible
 import io.noties.markwon.Markwon
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class MainActivity : AppCompatActivity() {
@@ -199,9 +201,10 @@ class MainActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.INVISIBLE
                     // Build system prompt — base instructions + optional patient profile
-                    val basePrompt = "Only provide short answers unless the user requests a detailed answer."
-
-
+                    val basePrompt = "Only provide short answers unless the user requests a detailed answer. Today is ${
+                        LocalDate.now().format(
+                        DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH))}."
+                    Log.d("BasePrompt", basePrompt)
                     val db = userDbHelper
                     if (db == null) {
                         smolLM?.addSystemPrompt(basePrompt)

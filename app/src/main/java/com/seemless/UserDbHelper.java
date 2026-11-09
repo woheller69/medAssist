@@ -9,6 +9,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 public class UserDbHelper extends SQLiteOpenHelper {
 
     private Context context;
@@ -179,10 +186,20 @@ public class UserDbHelper extends SQLiteOpenHelper {
             sb.append("Name: ").append(name);
 
             if (dob > Long.MIN_VALUE) {
-                long nowSeconds = System.currentTimeMillis() / 1000;
-                long ageApproxSeconds = nowSeconds - dob;
-                int ageApproxYears = (int) (ageApproxSeconds / (365 * 24 * 60 * 60));
-                sb.append(" | Age: ").append(ageApproxYears);
+                Instant dobInstant = Instant.ofEpochSecond(dob);
+                ZoneId zone = ZoneId.systemDefault();
+                LocalDate dobDate = dobInstant.atZone(zone).toLocalDate();
+
+                // Calculate precise age (years only)
+                LocalDate today = LocalDate.now(zone);
+                Period period = Period.between(dobDate, today);
+                int age = period.getYears();
+
+                // Format date of birth: "April 25, 1979"
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH);
+                String dobFormatted = dobDate.format(formatter);
+
+                sb.append(" | Date of birth: ").append(dobFormatted).append(" (age ").append(age).append(")");
             }
 
             if (sex != null && !sex.isEmpty())   sb.append(" | Sex: ").append(sex);

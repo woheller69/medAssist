@@ -277,11 +277,6 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     // ── HELPERS ─────────────────────────────────────────────────
-    private int parseInt(String s, int defaultVal) {
-        try { return Integer.parseInt(s.isEmpty() ? "0" : s); }
-        catch (NumberFormatException e) { return defaultVal; }
-    }
-
     private double parseDouble(String s, double defaultVal) {
         try { return Double.parseDouble(s.isEmpty() ? "0" : s); }
         catch (NumberFormatException e) { return defaultVal; }
