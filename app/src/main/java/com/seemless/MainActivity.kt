@@ -122,7 +122,6 @@ class MainActivity : AppCompatActivity() {
         userDbHelper?.writableDatabase
 
         restorePrefs()
-        loadModelWithProgress()
 
         userButton.setOnClickListener { v: View? ->
             val intent = Intent(this@MainActivity, SettingsActivity::class.java)
