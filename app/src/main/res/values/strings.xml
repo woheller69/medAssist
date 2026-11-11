@@ -3,13 +3,18 @@
     <string name="download_model">Download model</string>
     <string name="install_model">Install model</string>
     <string name="start">Start</string>
-    <string name="language_not_supported">TTS: Language not supported</string>
-    <string name="tts_init_failed">TTS: initialization failed</string>
     <string name="read_license">Read MedGemma license</string>
     <string name="hint_accept_terms">You need to accept the terms of use first.</string>
     <string name="warning">Never rely on this app for diagnosis, treatment decisions, or emergency care. Always consult a qualified healthcare professional for medical concerns.</string>
+    <string name="warning2">This is not a substitute for professional medical advice. In case of emergency, call your local emergency services immediately!</string>
     <string name="accept_terms_of_use">I understand and accept the above disclaimer and the Health AI Developer Foundations terms of use. I will use the app at my own risk.</string>
     <string name="license"><b>CRITICAL DISCLAIMER:</b> medAssist is NOT a medical device and does NOT provide medical advice. This application is an <b>educational and informational tool only</b>. It uses a large language model (MedGemma) that can produce incorrect, outdated, or harmful information. It has no understanding of your personal medical history beyond what you type, cannot perform clinical judgment, and is not evaluated by any medical regulatory body. <b>Never</b> rely on this app for diagnosis, treatment decisions, or emergency care. Always consult a qualified healthcare professional for medical concerns. \n<b>In case of emergency, call your local emergency services immediately.</b> \nThe developers, contributors, and distributors of medAssist shall not be liable for any direct, indirect, incidental, special, or consequential damages, including personal injury, illness, or death resulting from use or misuse of this software. \nThe use of MedGemma is governed by the Health AI Developer Foundations terms of use. MedGemma has not been evaluated or optimized for multi-turn applications.</string>
     <string name="install_whisper">Install Whisper+ from F-Droid</string>
+    <string name="language_not_supported">TTS: Language not supported</string>
+    <string name="tts_init_failed">TTS: initialization failed</string>
+    <string name="user">User</string>
+    <string name="assistant">Assistant</string>
+    <string name="select_patient">Select Patient</string>
+    <string name="patient_details">Patient Details (in English please)</string>
 
 </resources>

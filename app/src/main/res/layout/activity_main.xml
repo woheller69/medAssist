@@ -38,7 +38,7 @@
                 android:textSize="16sp"
                 android:padding="12dp"
                 android:inputType="textNoSuggestions|textMultiLine"
-                android:hint="User"
+                android:hint="@string/user"
                 android:minHeight="120dp" />
         </ScrollView>
 
@@ -59,7 +59,7 @@
                 android:background="@null"
                 android:textSize="16sp"
                 android:padding="12dp"
-                android:hint="Assistant"
+                android:hint="@string/assistant"
                 android:minHeight="120dp" />
         </ScrollView>
 
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
-            android:text = "This is not a substitute for professional medical advice. In case of emergency, call your local emergency services immediately!"
+            android:text = "@string/warning2"
             android:textSize="12dp"/>
         <!-- Progress Bar -->
         <ProgressBar
@@ -128,7 +128,7 @@
                 android:layout_marginStart="10dp"
                 android:backgroundTint="@color/colorAccent"
                 android:src="@drawable/user_24dp"
-                android:contentDescription="User"
+                android:contentDescription="@string/user"
                 android:layout_marginBottom="10dp" />
 
         </LinearLayout>
