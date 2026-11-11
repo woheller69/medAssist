@@ -3,6 +3,8 @@ package com.seemless
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
 import android.view.View
@@ -24,6 +26,7 @@ import java.io.File
 import java.util.Locale
 import android.util.Log
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import io.noties.markwon.Markwon
 import java.time.LocalDate
@@ -127,6 +130,20 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this@MainActivity, SettingsActivity::class.java)
             startActivity(intent)
         }
+        val alertDialog = AlertDialog.Builder(this)
+            .setIcon(R.drawable.warning_24dp)
+            .setTitle(R.string.app_name)
+            .setMessage(R.string.warning)
+            .create()
+
+        alertDialog.show()
+
+        val handler = Handler(Looper.getMainLooper())
+        val runnable = Runnable {
+            if (alertDialog.isShowing)
+                alertDialog.dismiss()
+        }
+        handler.postDelayed(runnable, 5000)
 
     }
 
