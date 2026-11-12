@@ -1,0 +1,4 @@
+UI improvements
+Show warning at app start
+Provide current date and date of birth to model
+Bugfixes
