@@ -103,11 +103,10 @@ class MainActivity : AppCompatActivity() {
         runInferenceButton.setOnClickListener {
             if (progressBar.isVisible) {
                 smolLM?.stop()
-                runInferenceButton.setImageResource(R.drawable.play_arrow)
+                runInferenceButton.setImageResource(R.drawable.ic_send)
             }
             else {
                 runInference()
-                runInferenceButton.setImageResource(R.drawable.ic_stop)
             }
         }
 
@@ -265,7 +264,7 @@ class MainActivity : AppCompatActivity() {
         tvResult.text=""
         tvResult.setTextIsSelectable(false)
         initTTS(Locale(getLang()))
-
+        runInferenceButton.setImageResource(R.drawable.ic_stop)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 withContext(Dispatchers.Main) {
@@ -298,13 +297,13 @@ class MainActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     tvResult.setTextIsSelectable(true)
                     progressBar.visibility = ProgressBar.INVISIBLE
-                    runInferenceButton.setImageResource(R.drawable.play_arrow)
+                    runInferenceButton.setImageResource(R.drawable.ic_send)
                 }
 
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     progressBar.visibility = ProgressBar.INVISIBLE
-                    runInferenceButton.setImageResource(R.drawable.play_arrow)
+                    runInferenceButton.setImageResource(R.drawable.ic_send)
                     tvResult.text = "❌ Error:\n${e.message}"
                     Toast.makeText(this@MainActivity, "Inference failed: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
