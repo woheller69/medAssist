@@ -60,7 +60,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
         cv.put(COL_SEX,       "Not specified");
         cv.put(COL_WEIGHT,    -1);
         cv.put(COL_HEIGHT,    -1);
-        cv.put(COL_BLOOD,     "Not known");
+        cv.put(COL_BLOOD,     "Not specified");
         cv.put(COL_CONDITIONS, "");
         cv.put(COL_MEDICATION, "");
         long id = db.insert(TABLE_USERS, null, cv);
