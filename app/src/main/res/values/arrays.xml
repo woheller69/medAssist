@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- res/values/arrays.xml -->
 <resources>
 
     <string-array name="sex_array">
@@ -18,6 +18,35 @@
         <item>O+</item>
         <item>O−</item>
         <item>Not specified</item>
+    </string-array>
+
+    <string-array name="smoking_code_array">
+        <item>Not specified</item>
+        <item>Never smoked</item>
+        <item>Former smoker (quit)</item>
+        <item>1–15 cigarettes/week</item>
+        <item>1–15 cigarettes/day</item>
+        <item>&gt;15 cigarettes/day</item>
+    </string-array>
+
+    <!-- Display → Habit-based, relatable -->
+    <string-array name="alcohol_display_array">
+        <item>Not specified</item>
+        <item>None</item>
+        <item>1–7 glasses / week</item>
+        <item>8–14 glasses / week</item>
+        <item>15–28 glasses / week</item>
+        <item>&gt;28 glasses / week</item>
+    </string-array>
+
+    <!-- Code → Standardized alcohol/week for LLM prompt -->
+    <string-array name="alcohol_code_array">
+        <item>Not specified</item>
+        <item>None</item>
+        <item>&lt;70g/week</item>
+        <item>70–140g/week</item>
+        <item>140–280g/week</item>
+        <item>&gt;280g/week</item>
     </string-array>
 
 </resources>

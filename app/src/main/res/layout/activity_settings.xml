@@ -1,13 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true"
     android:fitsSystemWindows="true">
+
     <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="84dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,178 +36,384 @@
                     android:id="@+id/spinnerUsers"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
-                    android:layout_weight="1"
-                    />
-
+                    android:layout_weight="1"/>
             </LinearLayout>
 
-            <!-- ── Form Fields ───────────────────────────────────── -->
+            <!-- ──────────────────────────────────────────────────────
+                 SECTION: GENERAL
+            ────────────────────────────────────────────────────── -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/patient_details"
-                android:textSize="14sp"
+                android:text="General"
+                android:textSize="16sp"
                 android:textStyle="bold"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"/>
 
             <!-- Name -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Name">
+                android:text="Name"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:inputType="textNoSuggestions"
+                android:layout_marginTop="8dp"/>
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:inputType="text"
+                android:backgroundTint="@android:color/transparent"
+                android:hint="e.g. John Doe"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Date of Birth, Weight, Height -->
+            <!-- DOB, Weight, Height (3-column) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_marginBottom="8dp">
 
-                <com.google.android.material.textfield.TextInputLayout
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:hint="Date of Birth">
+                    android:text="Date of Birth"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"/>
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etDateOfBirth"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none"
-                        android:focusable="false"
-                        android:clickable="true"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:hint="Weight kg">
+                    android:text="Weight (kg)"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"/>
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etWeight"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="numberDecimal"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:hint="Height cm">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etHeight"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="numberDecimal"/>
-                </com.google.android.material.textfield.TextInputLayout>
+                    android:text="Height (cm)"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"/>
             </LinearLayout>
 
-            <!-- Sex, Blood -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_marginBottom="8dp">
+
+                <EditText
+                    android:id="@+id/etDateOfBirth"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:hint="MM/dd/yyyy"
+                    android:backgroundTint="@android:color/transparent"
+                    android:textSize="14sp"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="4dp" />
+
+                <EditText
+                    android:id="@+id/etWeight"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:hint="e.g. 70.5"
+                    android:textSize="14sp"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:backgroundTint="@android:color/transparent"/>
+
+                <EditText
+                    android:id="@+id/etHeight"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:hint="e.g. 175"
+                    android:textSize="14sp"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:backgroundTint="@android:color/transparent"/>
+            </LinearLayout>
+
+            <!-- Sex & Blood (side-by-side) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Sex"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="5dp"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Blood group"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
                 <Spinner
                     android:id="@+id/spinnerSex"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="5dp"
-                    android:entries="@array/sex_array" />
+                    android:entries="@array/sex_array"/>
+
                 <Spinner
                     android:id="@+id/spinnerBlood"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
-                    android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:entries="@array/blood_array" />
+                    android:layout_marginStart="5dp"
+                    android:entries="@array/blood_array"/>
             </LinearLayout>
 
-            <!-- Conditions & Vitals -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+            <!-- ──────────────────────────────────────────────────────
+                 SECTION: CONDITIONS & VITALS
+            ────────────────────────────────────────────────────── -->
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Conditions &amp; Vitals"
-                android:layout_marginTop="8dp">
+                android:text="Conditions &amp; Vitals"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etConditions"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine|textNoSuggestions"
-                    android:minLines="2"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Current Medication -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Current Medication"
-                android:layout_marginTop="8dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etMedication"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine|textNoSuggestions"
-                    android:minLines="2"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Enable for LLM -->
-
+            <!-- Pulse + BP in one row (2-column) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/btnAdd"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:backgroundTint="@color/colorAccent"
-                    android:src="@drawable/ic_add"
-                    android:contentDescription="Add patient"
-                    android:layout_marginBottom="10dp" />
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/btnSave"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:backgroundTint="@color/colorAccent"
-                    android:src="@drawable/ic_save"
-                    android:contentDescription="Save patient"
-                    android:layout_marginBottom="10dp" />
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/btnDelete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:backgroundTint="@color/colorAccent"
-                    android:src="@drawable/ic_delete"
-                    android:contentDescription="Delete patient"
-                    android:layout_marginBottom="10dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pulse (bpm)"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
 
+                    <EditText
+                        android:id="@+id/etPulse"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:hint="e.g. 60"
+                        android:textSize="14sp"
+                        android:gravity="center_vertical"
+                        android:backgroundTint="@android:color/transparent"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Blood pressure (mmHg)"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+
+                    <EditText
+                        android:id="@+id/etBloodPressure"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:inputType="text"
+                        android:maxLength="10"
+                        android:hint="e.g. 120/80"
+                        android:textSize="14sp"
+                        android:gravity="center_vertical"
+                        android:backgroundTint="@android:color/transparent"/>
+                </LinearLayout>
             </LinearLayout>
-
-            <!-- Spacer -->
-            <View
+            <!-- Conditions -->
+            <EditText
+                android:id="@+id/etConditions"
                 android:layout_width="match_parent"
-                android:layout_height="32dp"/>
+                android:layout_height="wrap_content"
+                android:minLines="2"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:gravity="top|start"
+                android:hint="e.g. Hypertension, Type 2 diabetes"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@android:color/transparent"/>
+            <!-- ──────────────────────────────────────────────────────
+                 SECTION: LIFESTYLE
+            ────────────────────────────────────────────────────── -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lifestyle"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Smoking (dropdown) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Smoking"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"/>
+            <Spinner
+                android:id="@+id/spinnerSmoking"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:entries="@array/smoking_code_array"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Alcohol (dropdown) -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alcohol"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp"/>
+            <Spinner
+                android:id="@+id/spinnerAlcohol"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:entries="@array/alcohol_display_array"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Sports (multi-line text) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sports / Physical Activity"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp"/>
+            <EditText
+                android:id="@+id/etSports"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minLines="2"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:gravity="top|start"
+                android:hint="e.g. Tennis 3x/week"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@android:color/transparent"/>
+
+            <!-- ──────────────────────────────────────────────────────
+                 SECTION: CURRENT MEDICATION
+            ────────────────────────────────────────────────────── -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Current Medication"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/etMedication"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minLines="2"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:gravity="top|start"
+                android:hint="e.g. Aspirin 100 mg daily"
+                android:textSize="14sp"
+                android:backgroundTint="@android:color/transparent"/>
 
         </LinearLayout>
     </ScrollView>
+    <!-- ──────────────────────────────────────────────────────
+         ACTION BUTTONS
+    ────────────────────────────────────────────────────── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:backgroundTint="@color/colorAccent"
+            android:src="@drawable/ic_add"
+            android:contentDescription="Add patient"
+            android:layout_marginBottom="10dp"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:backgroundTint="@color/colorAccent"
+            android:src="@drawable/ic_save"
+            android:contentDescription="Save patient"
+            android:layout_marginBottom="10dp"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:backgroundTint="@color/colorAccent"
+            android:src="@drawable/ic_delete"
+            android:contentDescription="Delete patient"
+            android:layout_marginBottom="10dp"/>
+    </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

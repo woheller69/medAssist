@@ -34,6 +34,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     private EditText       etName, etDateOfBirth, etWeight, etHeight, etConditions, etMedication;
     private Spinner        spinnerSex, spinnerBlood;
+    private EditText       etPulse;
+    private EditText       etBloodPressure;
+    private Spinner        spinnerSmoking, spinnerAlcohol;
+    private EditText       etSports;
 
     private long currentUserId = 1; //Anonymous
 
@@ -54,7 +58,6 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     // ── VIEW INIT ────────────────────────────────────────────────
-    // ── Load last-active on create (restore spinner position) ────
     private void initViews() {
         spinnerUsers = findViewById(R.id.spinnerUsers);
         btnSave      = findViewById(R.id.btnSave);
@@ -70,6 +73,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         spinnerSex   = findViewById(R.id.spinnerSex);
         spinnerBlood = findViewById(R.id.spinnerBlood);
+        etPulse       = findViewById(R.id.etPulse);
+        etBloodPressure = findViewById(R.id.etBloodPressure);
+        spinnerSmoking  = findViewById(R.id.spinnerSmoking);
+        spinnerAlcohol  = findViewById(R.id.spinnerAlcohol);
+        etSports        = findViewById(R.id.etSports);
 
         // Restore last-active user so spinner lands on the right one
         SharedPreferences prefs = getSharedPreferences("medassist_settings", MODE_PRIVATE);
@@ -162,6 +170,29 @@ public class SettingsActivity extends AppCompatActivity {
 
         etConditions.setText(user.conditions != null ? user.conditions : "");
         etMedication.setText(user.medication != null ? user.medication : "");
+
+        etPulse.setText(user.pulse != -1 ? String.valueOf(user.pulse) : "");
+
+        etBloodPressure.setText(user.bloodPressure != null ? user.bloodPressure : "");
+
+        String[] smokingDisplay = getResources().getStringArray(R.array.smoking_code_array);
+        int smokingPos = findSpinnerIndex(smokingDisplay, user.smoking);
+        spinnerSmoking.setSelection(smokingPos);
+
+        String[] alcoholCode    = getResources().getStringArray(R.array.alcohol_code_array);
+        int alcoholPos = findSpinnerIndex(alcoholCode, user.alcohol);
+        spinnerAlcohol.setSelection(alcoholPos);
+
+        etSports.setText(user.sports != null ? user.sports : "");
+    }
+
+    // Helper to find spinner position by matching code string
+    private int findSpinnerIndex(String[] displayArray, String value) {
+        if (value == null || value.isEmpty()) return 0;
+        for (int i = 0; i < displayArray.length; i++) {
+            if (value.equals(displayArray[i])) return i;
+        }
+        return 0; // fallback to first ("Not specified")
     }
 
     private void clearForm() {
@@ -172,8 +203,13 @@ public class SettingsActivity extends AppCompatActivity {
         etHeight.setText("");
         etConditions.setText("");
         etMedication.setText("");
+        etPulse.setText("");
+        etBloodPressure.setText("");
+        etSports.setText("");
         spinnerSex.setSelection(3);
         spinnerBlood.setSelection(8);
+        spinnerSmoking.setSelection(0);
+        spinnerAlcohol.setSelection(0);
     }
 
     // ── LISTENERS ───────────────────────────────────────────────
@@ -192,14 +228,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         // ── DATE OF BIRTH CLICK ─────────────────────────────────
         etDateOfBirth.setOnClickListener(v -> {
-
             long dobSeconds = getEpochFromDateString(etDateOfBirth.getText().toString().trim());
-
             Calendar c = Calendar.getInstance();
             if (dobSeconds > Long.MIN_VALUE) {
                 c.setTimeInMillis(dobSeconds * 1000L);
             }
-
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
@@ -237,17 +270,33 @@ public class SettingsActivity extends AppCompatActivity {
             String conditions = etConditions.getText().toString().trim();
             String medication = etMedication.getText().toString().trim();
 
+            int pulse = etPulse.getText().toString().equals("") ? -1 : Integer.parseInt(etPulse.getText().toString().trim());
+
+            String bpRaw = etBloodPressure.getText().toString().trim();
+            String bpValue = bpRaw.equals("") ? "" : validateBP(bpRaw);
+
+            String[] smokingCode = getResources().getStringArray(R.array.smoking_code_array);
+            String[] alcoholCode = getResources().getStringArray(R.array.alcohol_code_array);
+
+            String smokingValue = smokingCode[spinnerSmoking.getSelectedItemPosition()];
+            String alcoholValue = alcoholCode[spinnerAlcohol.getSelectedItemPosition()];
+
+            String sportsValue = etSports.getText().toString().trim();
+
             UserDbHelper.User existing = getUserByName(name);
 
             if (existing != null && existing.id == currentUserId) {
-                dbHelper.updateUser(currentUserId, name, sex, dob, weight, height, blood, conditions, medication);
+                dbHelper.updateUser(currentUserId, name, sex, dob, weight, height, blood, conditions, medication,
+                        pulse, bpValue, smokingValue, alcoholValue, sportsValue);
                 Toast.makeText(this, "Patient updated", Toast.LENGTH_SHORT).show();
             } else if (existing != null && existing.id != currentUserId) {
-                dbHelper.updateUser(existing.id, name, sex, dob, weight, height, blood, conditions, medication);
+                dbHelper.updateUser(existing.id, name, sex, dob, weight, height, blood, conditions, medication,
+                        pulse, bpValue, smokingValue, alcoholValue, sportsValue);
                 currentUserId = existing.id;
                 Toast.makeText(this, "Patient \"" + name + "\" updated (merged)", Toast.LENGTH_SHORT).show();
             } else {
-                long id = dbHelper.insertUser(name, dob, sex, weight, height, blood, conditions, medication);
+                long id = dbHelper.insertUser(name, dob, sex, weight, height, blood, conditions, medication,
+                        pulse, bpValue, smokingValue, alcoholValue, sportsValue);
                 if (id != -1) {
                     currentUserId = id;
                     Toast.makeText(this, "Patient \"" + name + "\" added", Toast.LENGTH_SHORT).show();
@@ -292,18 +341,29 @@ public class SettingsActivity extends AppCompatActivity {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
             Date date = sdf.parse(dateString);
-
             Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
             cal.setTime(date);
-
             return cal.getTimeInMillis() / 1000;
-
         } catch (Exception e) {
-            // Log the error for debugging
             Log.e("SettingsActivity", "Error parsing date: " + dateString, e);
             // Return Long.MIN_VALUE to indicate "unknown date of birth"
             return Long.MIN_VALUE;
         }
+    }
+
+    // ✅ Validate BP format: "X/Y" (e.g. "120/80")
+    private String validateBP(String bp) {
+        if (bp == null || bp.isEmpty()) return "";
+        String[] parts = bp.split("/");
+        if (parts.length == 2) {
+            try {
+                int sys = Integer.parseInt(parts[0].trim());
+                int dia = Integer.parseInt(parts[1].trim());
+                if (sys > 0 && dia > 0) return sys + "/" + dia;
+            } catch (NumberFormatException ignored) {}
+        }
+        Toast.makeText(this, "Invalid BP format. Use '120/80'", Toast.LENGTH_SHORT).show();
+        return "";
     }
 
     @Override
