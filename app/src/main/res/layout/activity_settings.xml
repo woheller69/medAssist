@@ -9,7 +9,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="84dp">
+        android:layout_marginBottom="108dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,7 +22,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/select_patient"
-                android:textSize="14sp"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp"/>
 
@@ -46,6 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="General"
+                android:textColor="@color/colorAccent"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="8dp"
@@ -208,6 +210,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Conditions &amp; Vitals"
+                android:textColor="@color/colorAccent"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
@@ -292,6 +295,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Lifestyle"
+                android:textColor="@color/colorAccent"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
@@ -317,7 +321,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Alcohol"
+                android:text="Alcohol in 0.25l of wine or equivalent"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginTop="4dp"/>
@@ -355,6 +359,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Current Medication"
+                android:textColor="@color/colorAccent"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
@@ -373,47 +378,58 @@
 
         </LinearLayout>
     </ScrollView>
-    <!-- ──────────────────────────────────────────────────────
-         ACTION BUTTONS
-    ────────────────────────────────────────────────────── -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal"
         android:layout_gravity="bottom"
-        android:layout_marginTop="16dp"
+        android:orientation="vertical"
         android:layout_marginBottom="8dp">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnAdd"
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:backgroundTint="@color/colorAccent"
-            android:src="@drawable/ic_add"
-            android:contentDescription="Add patient"
-            android:layout_marginBottom="10dp"/>
+            android:gravity="center_horizontal"
+            android:textColor="@color/colorAccent"
+            android:text="@string/lang_settings" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnSave"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:backgroundTint="@color/colorAccent"
-            android:src="@drawable/ic_save"
-            android:contentDescription="Save patient"
-            android:layout_marginBottom="10dp"/>
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="8dp">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:backgroundTint="@color/colorAccent"
-            android:src="@drawable/ic_delete"
-            android:contentDescription="Delete patient"
-            android:layout_marginBottom="10dp"/>
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:backgroundTint="@color/colorAccent"
+                android:src="@drawable/ic_add"
+                android:contentDescription="Add patient"
+                android:layout_marginBottom="10dp"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:backgroundTint="@color/colorAccent"
+                android:src="@drawable/ic_save"
+                android:contentDescription="Save patient"
+                android:layout_marginBottom="10dp"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:backgroundTint="@color/colorAccent"
+                android:src="@drawable/ic_delete"
+                android:contentDescription="Delete patient"
+                android:layout_marginBottom="10dp"/>
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

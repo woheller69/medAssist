@@ -16,5 +16,6 @@
     <string name="assistant">Assistant</string>
     <string name="select_patient">Select Patient</string>
     <string name="patient_details">Patient Details (in English please)</string>
+    <string name="lang_settings">Please provide all information above in English</string>
 
 </resources>

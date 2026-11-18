@@ -38,8 +38,7 @@
                 android:textSize="16sp"
                 android:padding="12dp"
                 android:inputType="textNoSuggestions|textMultiLine"
-                android:hint="@string/user"
-                android:minHeight="120dp" />
+                android:hint="@string/user" />
         </ScrollView>
 
         <!-- Output Panel -->
