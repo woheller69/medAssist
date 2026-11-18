@@ -1,0 +1,3 @@
+add setting options for pulse, blood pressure, smoking, alcohol, sports
+improved layout
+bugfixes
