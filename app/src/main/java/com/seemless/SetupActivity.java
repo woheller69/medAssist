@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ public class SetupActivity extends AppCompatActivity {
     TextView extractedFileTV;
     Button startButton;
     CheckBox acceptLicense;
+    ScrollView scrollView;
     LinearLayout downloadInstall;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +46,29 @@ public class SetupActivity extends AppCompatActivity {
         startButton = findViewById(R.id.button_start);
         downloadInstall = findViewById(R.id.download_install);
         acceptLicense = findViewById(R.id.accept_license);
-        acceptLicense.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (acceptLicense.isChecked()) downloadInstall.setVisibility(View.VISIBLE);
-            }
+        acceptLicense.setOnClickListener(view -> {
+            if (acceptLicense.isChecked()) downloadInstall.setVisibility(View.VISIBLE);
         });
+
+        scrollView = findViewById(R.id.scroll_view);
+        // 1. Define listener
+        ViewTreeObserver.OnScrollChangedListener scrollListener = () -> {
+            View child = scrollView.getChildAt(0);
+            if (child == null) return;
+            int scrollY = scrollView.getScrollY();
+            int viewHeight = scrollView.getHeight();
+            int totalScrollHeight = child.getHeight();
+            boolean contentFits = totalScrollHeight <= viewHeight;
+            boolean scrolledToBottom = scrollY >= (totalScrollHeight - viewHeight - 5);
+            acceptLicense.setEnabled(contentFits || scrolledToBottom);
+        };
+
+        // 2. Add listener
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(scrollListener);
+
+        // 3. Trigger manual check to set initial state (after layout is complete)
+        scrollView.post(scrollListener::onScrollChanged);
+
         File sdcardDataFolder = getExternalFilesDir(null);
 
         install = registerForActivityResult(
